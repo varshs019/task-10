@@ -6,6 +6,8 @@ A modern, full-stack task management application built with **Node.js**, **Expre
 
 **Deployed on Render:** [Task Manager App](https://task-manager-app-varshitha.onrender.com)
 
+**GitHub Repository:** [Task Manager App](https://github.com/varshs019/task-10.git)
+
 ## ✨ Features
 
 ### Core Functionality
@@ -67,8 +69,8 @@ A modern, full-stack task management application built with **Node.js**, **Expre
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
-   cd task-manager-app
+   git clone https://github.com/varshs019/task-10.git
+   cd task-10
    ```
 
 2. **Install dependencies**
@@ -181,7 +183,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Varshitha**
-- GitHub: [@your-github-username]
+- GitHub: [@varshs019](https://github.com/varshs019)
 - LinkedIn: [@your-linkedin-profile]
 
 ## 🙏 Acknowledgments
