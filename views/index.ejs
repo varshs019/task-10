@@ -340,6 +340,13 @@
         </div>
 
         <div class="tasks-container">
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="error-message" style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Database Error:</strong> <%= error %>
+                </div>
+            <% } %>
+            
             <% if (tasks && tasks.length > 0) { %>
                 <% tasks.forEach(task => { %>
                     <div class="task-item <%= task.completed ? 'completed' : '' %>" data-id="<%= task._id %>">
@@ -370,7 +377,7 @@
                         </div>
                     </div>
                 <% }); %>
-            <% } else { %>
+            <% } else if (typeof error === 'undefined' || !error) { %>
                 <div class="no-tasks">
                     <i class="fas fa-clipboard-list" style="font-size: 3rem; color: #ccc; margin-bottom: 20px;"></i>
                     <p>No tasks yet. Add your first task above!</p>

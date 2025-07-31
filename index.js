@@ -21,6 +21,18 @@ let db;
 
 async function connectToMongoDB() {
   try {
+    if (!uri) {
+      console.error('MONGODB_URI environment variable is not set!');
+      console.error('Please set MONGODB_URI in your environment variables.');
+      return;
+    }
+    
+    if (!uri.startsWith('mongodb://') && !uri.startsWith('mongodb+srv://')) {
+      console.error('Invalid MongoDB URI format!');
+      console.error('URI must start with mongodb:// or mongodb+srv://');
+      return;
+    }
+
     const client = new MongoClient(uri);
     await client.connect();
     db = client.db('taskmanager');
@@ -33,17 +45,33 @@ async function connectToMongoDB() {
 // Routes
 app.get('/', async (req, res) => {
   try {
+    if (!db) {
+      return res.render('index', { 
+        tasks: [],
+        error: 'Database connection not available. Please check your MongoDB configuration.'
+      });
+    }
     const tasks = await db.collection('tasks').find({}).toArray();
     res.render('index', { tasks });
   } catch (error) {
     console.error('Error fetching tasks:', error);
-    res.render('index', { tasks: [] });
+    res.render('index', { 
+      tasks: [],
+      error: 'Error connecting to database. Please try again later.'
+    });
   }
 });
 
 // Add new task
 app.post('/tasks', async (req, res) => {
   try {
+    if (!db) {
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Database connection not available!' 
+      });
+    }
+
     const { title, priority } = req.body;
     
     if (!title || title.trim() === '') {
@@ -80,6 +108,13 @@ app.post('/tasks', async (req, res) => {
 // Update task
 app.put('/tasks/:id', async (req, res) => {
   try {
+    if (!db) {
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Database connection not available!' 
+      });
+    }
+
     const { id } = req.params;
     const { title, priority } = req.body;
     
@@ -125,6 +160,13 @@ app.put('/tasks/:id', async (req, res) => {
 // Toggle task completion
 app.patch('/tasks/:id/toggle', async (req, res) => {
   try {
+    if (!db) {
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Database connection not available!' 
+      });
+    }
+
     const { id } = req.params;
     const { ObjectId } = require('mongodb');
     
@@ -165,6 +207,13 @@ app.patch('/tasks/:id/toggle', async (req, res) => {
 // Delete task
 app.delete('/tasks/:id', async (req, res) => {
   try {
+    if (!db) {
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Database connection not available!' 
+      });
+    }
+
     const { id } = req.params;
     const { ObjectId } = require('mongodb');
     
@@ -197,6 +246,10 @@ async function startServer() {
   await connectToMongoDB();
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
+    console.log('Environment check:');
+    console.log('- PORT:', process.env.PORT || 3000);
+    console.log('- MONGODB_URI:', process.env.MONGODB_URI ? 'Set' : 'Not set');
+    console.log('- NODE_ENV:', process.env.NODE_ENV || 'development');
   });
 }
 
